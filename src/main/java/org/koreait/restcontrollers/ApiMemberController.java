@@ -5,10 +5,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.koreait.entities.Member;
 import org.koreait.repositories.MemberRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/member")
@@ -45,13 +49,40 @@ public class ApiMemberController {
 
 
     @PostMapping("/login")
-    public void login(@RequestBody @Valid RequestLogin form, Errors errors) {
+    public ResponseEntity login(@RequestBody @Valid RequestLogin form, Errors errors) {    //json형식으로 반환한다고 알려주기 검증실패하면 error에 담아서 보여주기
 
         if(errors.hasErrors()){
-            errors.getAllErrors().stream().map(o -> o.getDefaultMessage()).forEach(System.out::println);
+            String message = errors.getAllErrors().stream()
+                    .map(o -> o.getDefaultMessage())
+                    .collect(Collectors.joining(","));   //현재 발생한 모든 에러가 담겨져 있다
+
+            throw new RuntimeException(message);
+
         }
 
         log.info(form.toString());
+
+        /*
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .header("TestHeader","Test")
+                .build();     //출력데이터가 없을때 빌드로 끝내면된다.
+
+
+         */
+
+        return ResponseEntity.ok().build();   //출력 데이터가 없을때 빌드로 끝내면 된다.
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> errorHandler(Exception e){
+
+     ResponseEntity<String> response = ResponseEntity
+             .badRequest()
+             .body(e.getMessage());
+
+     return response;
+
     }
 }
 
