@@ -3,6 +3,7 @@ package org.koreait.restcontrollers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.koreait.commons.JSONData;
 import org.koreait.entities.Member;
 import org.koreait.repositories.MemberRepository;
 import org.springframework.http.HttpStatus;
@@ -22,10 +23,13 @@ public class ApiMemberController {
     private final MemberRepository repository;
 
     @GetMapping("{/userId}")
-    public Member info(@PathVariable String userId){
+    public ResponseEntity<JSONData<Member>> info(@PathVariable String userId){
         Member member = repository.findByUserId(userId);
 
-        return member;
+
+        JSONData<Member>data = new JSONData<>(member);
+
+        return ResponseEntity.status(data.getStatus()).body(data);
 
     }
     @GetMapping("/list")
