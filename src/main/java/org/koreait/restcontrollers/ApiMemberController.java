@@ -29,6 +29,13 @@ public class ApiMemberController {
 
         JSONData<Member>data = new JSONData<>(member);
 
+        boolean isError = true;
+        if(isError){
+                throw new  RuntimeException("에러발생!!!");
+
+
+        }
+
         return ResponseEntity.status(data.getStatus()).body(data);
 
     }
@@ -79,13 +86,17 @@ public class ApiMemberController {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> errorHandler(Exception e){
+    public ResponseEntity<JSONData<Object>> errorHandler(Exception e){
 
-     ResponseEntity<String> response = ResponseEntity
-             .badRequest()
-             .body(e.getMessage());
+        JSONData<Object> data = new JSONData<>();
+        data.setSuccess(false);
+        data.setStatus(HttpStatus.BAD_REQUEST);
+        data.setMessage(e.getMessage());
 
-     return response;
+
+        return ResponseEntity.status(data.getStatus()).body(data);
+
+
 
     }
 }
