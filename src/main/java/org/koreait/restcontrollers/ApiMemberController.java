@@ -3,6 +3,8 @@ package org.koreait.restcontrollers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.koreait.commons.BadRequestException;
+import org.koreait.commons.CommonException;
 import org.koreait.commons.JSONData;
 import org.koreait.entities.Member;
 import org.koreait.repositories.MemberRepository;
@@ -31,7 +33,7 @@ public class ApiMemberController {
 
         boolean isError = true;
         if(isError){
-                throw new  RuntimeException("에러발생!!!");
+                throw new BadRequestException("에러발생!!!");  //응답코드 400
 
 
         }
@@ -85,19 +87,6 @@ public class ApiMemberController {
         return ResponseEntity.ok().build();   //출력 데이터가 없을때 빌드로 끝내면 된다.
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<JSONData<Object>> errorHandler(Exception e){
 
-        JSONData<Object> data = new JSONData<>();
-        data.setSuccess(false);
-        data.setStatus(HttpStatus.BAD_REQUEST);
-        data.setMessage(e.getMessage());
-
-
-        return ResponseEntity.status(data.getStatus()).body(data);
-
-
-
-    }
 }
 
