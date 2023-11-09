@@ -1,13 +1,12 @@
 package org.koreait.restcontrollers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.koreait.entities.Member;
 import org.koreait.repositories.MemberRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 @Slf4j
@@ -44,9 +43,15 @@ public class ApiMemberController {
 
     }
 
-    public void login(RequestLogin form) {
-        log.info(form.toString());
 
+    @PostMapping("/login")
+    public void login(@RequestBody @Valid RequestLogin form, Errors errors) {
+
+        if(errors.hasErrors()){
+            errors.getAllErrors().stream().map(o -> o.getDefaultMessage()).forEach(System.out::println);
+        }
+
+        log.info(form.toString());
     }
 }
 
